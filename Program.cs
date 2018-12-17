@@ -7,46 +7,21 @@ namespace CSharpTask
     {
         static void Main(string[] args)
         {
-            MagazineCollection collection = new MagazineCollection();
-            collection.AddDefaults();
-            foreach(var magazine in collection)
-            {
-                Console.WriteLine(magazine.ToString());
-                Console.WriteLine();
-            }
-            Console.WriteLine("Sorted by edition name");
-            foreach (var magazine in collection.SortByEditionName())
-            {
-                Console.WriteLine(magazine.ToString());
-                Console.WriteLine();
-            }
-            Console.WriteLine("Sorted by production date");
-            foreach (var magazine in collection.SortByProductionDate())
-            {
-                Console.WriteLine(magazine.ToString());
-                Console.WriteLine();
-            }
-            Console.WriteLine("Sorted by overlaying");
-            foreach (var magazine in collection.SortByOverlaying())
-            {
-                Console.WriteLine(magazine.ToString());
-                Console.WriteLine();
-            }
+            MagazineCollection collection1 = new MagazineCollection();
+            MagazineCollection collection2 = new MagazineCollection();
+            Listenter listener1 = new Listenter();
+            Listenter listener2 = new Listenter();
+            collection1.MagazineAdded += listener1.OnCollectionChanged;
+            collection1.MagazineReplaced += listener1.OnCollectionChanged;
+            collection1.MagazineAdded += listener2.OnCollectionChanged;
+            collection1.MagazineAdded += listener1.OnCollectionChanged;
+            collection1.AddDefaults();
+            collection2.AddDefaults();
+            Console.WriteLine("First listener output");
+            Console.WriteLine(listener1.ToString());
+             Console.WriteLine("Second listener output");
+            Console.WriteLine(listener2.ToString());
 
-            Console.WriteLine($"Max avg articles rating:{collection.MaxArticlesRating}");
-            Console.WriteLine("Magazines with monthly frequency");
-            foreach (var magazine in collection.MonthlyMagazines)
-            {
-                Console.WriteLine(magazine.ToString());
-                Console.WriteLine();
-            }
-            Console.WriteLine("Magazines with specified rating");
-            foreach (var magazine in collection.RatingGroup(120))
-            {
-                Console.WriteLine(magazine.ToString());
-                Console.WriteLine();
-            }
-            Console.Read();
         }
     }
 }

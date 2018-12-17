@@ -5,8 +5,12 @@ using System.Linq;
 
 namespace CSharpTask.Entity
 {
+
     public class MagazineCollection:IEnumerable
-    {
+   {
+        public delegate void MagazineListHandler (object source, MagazineListHandlerEventArgs args);
+        public event  MagazineListHandler MagazineAdded;
+        public event  MagazineListHandler MagazineReplaced;
         private List<Magazine> _magazines;
 
         public MagazineCollection()
@@ -27,6 +31,20 @@ namespace CSharpTask.Entity
             get
             {
                 return _magazines.Max(m => m.AvgArticlesRating);
+            }
+        }
+
+        public string CollectionName {get;set;}
+
+        public Magazine this[int index] {
+            get => _magazines[index];
+            set  {
+                _magazines[index] = value;
+                 MagazineAdded(this,new MagazineListHandlerEventArgs (
+                "Magazines",
+                "Replace",
+                index
+            ));
             }
         }
         
@@ -56,6 +74,13 @@ namespace CSharpTask.Entity
                 },
                 EditionName = "My Edition"
             });
+            if(MagazineAdded !=null){
+                 MagazineAdded(this,new MagazineListHandlerEventArgs (
+                     "Magazines",
+                     "Add",
+                     _magazines.Count
+                ));
+            }
             _magazines.Add(new Magazine
             {
                 Name = "Your Magazine",
@@ -80,6 +105,13 @@ namespace CSharpTask.Entity
                 },
                 EditionName = "Your Edition"
             });
+            if(MagazineAdded !=null){
+                 MagazineAdded(this,new MagazineListHandlerEventArgs (
+                     "Magazines",
+                     "Add",
+                     _magazines.Count
+                ));
+            }
         }
 
         public List<Magazine> SortByEditionName()
@@ -105,6 +137,20 @@ namespace CSharpTask.Entity
         public List<Magazine> RatingGroup(double value)
         {
             return _magazines.Where(m => m.AvgArticlesRating >= value).ToList();
+        }
+
+        public bool Replace(int index,Magazine magazine){
+            Magazine item = _magazines.ElementAtOrDefault(index);
+            if(item is null){
+                return false;
+            }
+            _magazines[index] = magazine;
+             MagazineAdded(this,new MagazineListHandlerEventArgs (
+                "Magazines",
+                "Replace",
+                index
+            ));
+            return true;
         }
 
 
